@@ -26,6 +26,8 @@ class CleanService(State):
         try:
             self.text_machine.start_transaction()
             # if no one contains this word - SKIP
+            print("*"*10)
+            print(self.text_machine.get_next())
             if self.text_machine.get_next() in (StationNumberData.main_words + StationNumberData.number_nums
                                                 + StationNumberData.number_words):
                 status = True

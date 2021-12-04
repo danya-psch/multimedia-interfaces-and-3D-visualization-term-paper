@@ -10,7 +10,7 @@ class TextMachine:
     current_word = None
 
     def __init__(self, text):
-        self.text = text
+        self.text = "_ " + text
         self.is_started = False
         self.is_Failed = False
 
@@ -26,6 +26,9 @@ class TextMachine:
 
     def process_new_text(self, new_text):
         self.rollback()
+        self.iterator = 0
+        self.current_iterator = 0
+        new_text = "_ " + new_text
         self.splitted_text = new_text.split()
 
     def get_iterator(self):
@@ -38,17 +41,18 @@ class TextMachine:
         return self.current_word
 
     def get_next(self):
-        if self.current_iterator >= len(self.current_splitted_text):
+        if self.current_iterator + 1 >= len(self.current_splitted_text):
             return None
-        return self.current_splitted_text[self.current_iterator]
+        return self.current_splitted_text[self.current_iterator + 1]
 
     def move(self):
         if self.current_iterator >= len(self.current_splitted_text):
             self.current_iterator = len(self.current_splitted_text) - 1
             return self.current_splitted_text[self.current_iterator]
 
-        self.current_word = self.current_splitted_text[self.current_iterator]
         self.current_iterator = self.current_iterator + 1
+        self.current_word = self.current_splitted_text[self.current_iterator]
+
 
         return self.current_word
 
@@ -69,8 +73,6 @@ class TextMachine:
 
     def rollback(self):
         self.is_started = False
-
-        self.current_splitted_text = None
         self.current_iterator = self.iterator
 
         print('Transaction FAILED: Rolled back')
