@@ -5,6 +5,11 @@ from pydub import AudioSegment
 import threading
 from word2number import w2n
 
+from states_machine.state_context import StateContext
+from states_machine.states.station_number import StationNumber
+from text_machine.text_machine import TextMachine
+
+
 class state:
     AWAITING_GREETINGS = 0
     AWAITING_ORDER = 1
@@ -91,6 +96,17 @@ def additional_services(text):
     pass
 
 def awaiting_order_handler(text):
+
+
+    context = StateContext(StationNumber(), TextMachine(text))
+
+    for i in range(0, 11):
+        context.outcome_request()
+    # while context.outcome_request():
+    #     continue  for i in range(0, 11):
+    #         context.outcome_request()
+
+
     print("awaiting_order_handler")
     text[2:]
 
