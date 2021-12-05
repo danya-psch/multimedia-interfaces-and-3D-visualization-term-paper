@@ -105,13 +105,10 @@ def awaiting_order_handler(text):
     print('#'*10 + " RESULT BEGIN " + '#'*10)
     print(context.serialize_result())
     print('#' * 10 + " RESULT END " + '#'*10)
+
     # Data Transfer Begin
 
     # Data Transfer End
-    # while context.outcome_request():
-    #     continue  for i in range(0, 11):
-    #         context.outcome_request()
-
 
     print("awaiting_order_handler")
     text[2:]
