@@ -4,6 +4,9 @@ from pydub.silence import split_on_silence
 from pydub import AudioSegment
 import threading
 from word2number import w2n
+from communication_module import com_module
+
+cm = com_module("mypipe")
 
 class state:
     AWAITING_GREETINGS = 0
@@ -13,10 +16,12 @@ class word_types:
     NUMBER = 0
     AWAITING_ORDER = 1
 
-class ctxt:
+class global_ctxt:
     curr_state = state.AWAITING_GREETINGS
     words = []
     curr_word = 0
+
+ctxt = global_ctxt()
 
 greetings_strings = ["вітаю", "привіт"]
 def awaiting_greetings_handler(text):
@@ -56,25 +61,6 @@ def accept(word_type):
     res = type_handlers[str(word_type)](ctxt.words[ctxt.curr_word])
     return True if res is not None else False
 
-# static Tree *expect(Parser *parser, TokenType type) {
-# 	Tree *tree = accept(parser, type);
-
-# 	if (tree != nullptr) {
-# 		return tree;
-# 	}
-# 	std::string currentTokenType = eoi(parser) ? "EOI" : to_string(parser->get_iterator_value().get_type());
-# 	int error_line = parser->get_iterator_value().get_line();
-# 	std::string message = "ERROR: expected " + to_string(type) + " got " + currentTokenType + ". Line: " + std::to_string(error_line) + ".\n";
-
-# 	parser->set_error(message);
-
-# 	return nullptr;
-# }
-
-def expect(word_type):
-    res = accept(word_type)
-    return True if res is not None else False
-
 def station_number(text):
     pass
 
@@ -91,7 +77,8 @@ def additional_services(text):
     pass
 
 def awaiting_order_handler(text):
-    print("awaiting_order_handler")
+    cm.transfer_data(text)
+    print(f'awaiting_order_handler {len(text)}')
     text[2:]
 
 state_handlers = {
