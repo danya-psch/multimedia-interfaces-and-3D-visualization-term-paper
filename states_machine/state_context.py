@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
+from message_bus.request_message import RequestMessage
 from text_machine.text_machine import TextMachine
 
 
@@ -39,8 +40,15 @@ class StateContext:
 
         :rtype: object
         """
+        self.request_message = RequestMessage()
         self._text_machine = text_machine
         self.transition_to(state)
+
+    def serialize_result(self):
+        return self.request_message.serialize()
+
+    def add_result(self, result, position):
+        self.request_message.add(result, position)
 
     def transition_to(self, state: State):
         print(f"Context: Transition to {type(state).__name__}")

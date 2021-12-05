@@ -17,6 +17,7 @@ class OnHowMany(State):
     def outcome_handle(self) -> None:
         print(f"outcome_handle: OnHowMany")
 
+        result = None
         status = False
         try:
             self.text_machine.start_transaction()
@@ -25,9 +26,10 @@ class OnHowMany(State):
             if self.text_machine.get_next() in OnHowManyData.additional_words:
                 self.text_machine.move()
                 if self.text_machine.get_next().isnumeric():
-                    self.text_machine.move()
+                    word = self.text_machine.move()
                     if self.text_machine.get_next() in OnHowManyData.main_words:
                         # TODO: Add to state machine info!!!
+                        result = word
                         self.text_machine.move()
                         print("*" * 10 + " OnHowMany " + "*" * 10)
                         print(self.text_machine.get_current())
@@ -36,6 +38,7 @@ class OnHowMany(State):
                         status = True
                         # на 20
                     elif float(self.text_machine.get_current()) < 100:
+                        result = self.text_machine.get_current()
                         print("*" * 10 + " OnHowMany " + "*" * 10)
                         print(self.text_machine.get_current())
                         print("*" * 10 + " OnHowMany " + "*" * 10)
@@ -49,7 +52,9 @@ class OnHowMany(State):
                       OnHowManyData.main_words
                       if currentWord in self.text_machine.get_next() and
                          Common.has_numbers(self.text_machine.get_next())]) > 0:
-                # TODO: Add to state machine info!!!
+
+                result = int(''.join(s for s in self.text_machine.get_next() if s.isdigit()))
+
                 print("*" * 10 + " OnHowMany " + "*" * 10)
                 print(self.text_machine.get_current())
                 print("*" * 10 + " OnHowMany " + "*" * 10)
@@ -69,4 +74,7 @@ class OnHowMany(State):
                 self.text_machine.rollback()
 
         print(f" OnHowMany wants to change the state of the context FuelType.")
+        if result is not None:
+            self.context.add_result(0, 2)
+            self.context.add_result(result, 3)
         self.context.transition_to(FuelType())

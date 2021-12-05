@@ -97,11 +97,17 @@ def additional_services(text):
 
 def awaiting_order_handler(text):
 
-
     context = StateContext(StationNumber(), TextMachine(text))
 
-    for i in range(0, 11):
+    for i in range(0, 11): # while
         context.outcome_request()
+
+    print('#'*10 + " RESULT BEGIN " + '#'*10)
+    print(context.serialize_result())
+    print('#' * 10 + " RESULT END " + '#'*10)
+    # Data Transfer Begin
+
+    # Data Transfer End
     # while context.outcome_request():
     #     continue  for i in range(0, 11):
     #         context.outcome_request()
