@@ -124,18 +124,21 @@ Temporary Items
 .apdisk
 
 # directories from ue4
-sioclient/SocketIOPrep.sln
-sioclient/Intermediate
-sioclient/Binaries
-sioclient/Saved
+MI/SocketIOPrep.sln
+MI/Intermediate
+MI/Binaries
+MI/Saved
 *.VC.db
 *.opendb
 .vs
 server/package-lock.json
 _Releases
 
-sioclient/Config/SteamVRBindings/*
-sioclient/Config/steamvr_ue_editor_app.json
+MI/Config/SteamVRBindings/*
+MI/Config/steamvr_ue_editor_app.json
 
 
 *.pyc
+
+
+
