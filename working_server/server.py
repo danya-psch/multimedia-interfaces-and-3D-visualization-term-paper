@@ -3,12 +3,12 @@ import socketio
 
 # eventlet, gevent
 async_mode = "eventlet"
-PORT = 3000
+PORT = 5000
 import time
 from flask import Flask, render_template
 import socketio
 
-sio = socketio.Server(logger=True, async_mode=async_mode)
+sio = socketio.Server(logger=True, async_mode=async_mode, cors_allowed_origins="*")
 app = Flask(__name__)
 app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 app.config['SECRET_KEY'] = 'secret!'
@@ -39,7 +39,8 @@ def my_event(sid, message):
 
 @sio.event
 def message_bus(message):
-    sio.emit('chatMessage', message)
+    print('here = ', message)
+    sio.emit('chatMessage', 'TEST NMESAGE!!')
 
 
 @sio.event
@@ -92,7 +93,7 @@ if __name__ == '__main__':
         # deploy with eventlet
         import eventlet
         import eventlet.wsgi
-        eventlet.wsgi.server(eventlet.listen(('', PORT)), app)
+        eventlet.wsgi.server(eventlet.listen(('127.0.0.1', PORT)), app)
     elif sio.async_mode == 'gevent':
         # deploy with gevent
         from gevent import pywsgi
@@ -102,13 +103,14 @@ if __name__ == '__main__':
         except ImportError:
             websocket = False
         if websocket:
-            pywsgi.WSGIServer(('', PORT), app,
+            pywsgi.WSGIServer(('127.0.0.1', PORT), app,
                               handler_class=WebSocketHandler).serve_forever()
         else:
-            pywsgi.WSGIServer(('', PORT), app).serve_forever()
+            pywsgi.WSGIServer(('127.0.0.1', PORT), app).serve_forever()
     elif sio.async_mode == 'gevent_uwsgi':
         print('Start the application through the uwsgi server. Example:')
         print('uwsgi --http :3000 --gevent 1000 --http-websockets --master '
               '--wsgi-file app.py --callable app')
     else:
         print('Unknown async_mode: ' + sio.async_mode)
+

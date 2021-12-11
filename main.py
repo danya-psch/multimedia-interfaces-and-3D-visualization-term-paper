@@ -1,3 +1,5 @@
+import time
+
 import speech_recognition as sr
 import os
 from pydub.silence import split_on_silence
@@ -128,6 +130,43 @@ def main():
         pass
 
 
-if __name__ == "__main__":
-    #main()
-    working_server.server.message_bus("Hello WORKDasd!")
+import time
+import socketio
+
+sio = socketio.Client(logger=True, engineio_logger=True)
+start_timer = None
+
+
+def send_ping():
+    global start_timer
+    start_timer = time.time()
+    sio.emit('message_bus')
+    #    time.sleep(2)
+
+@sio.event
+def connect():
+    print('connected to server')
+    send_ping()
+
+
+@sio.event
+def pong_from_server():
+    global start_timer
+    latency = time.time() - start_timer
+    print('latency is {0:.2f} ms'.format(latency * 1000))
+    sio.sleep(1)
+    if sio.connected:
+        send_ping()
+
+
+if __name__ == '__main__':
+    sio.connect('http://localhost:5000')
+    while True:
+        print("HERE 2")
+        sio.emit('message_bus')
+        time.sleep(2)
+    sio.wait()
+
+
+
+
