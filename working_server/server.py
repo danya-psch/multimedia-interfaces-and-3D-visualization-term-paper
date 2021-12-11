@@ -1,7 +1,7 @@
 import eventlet
 import socketio
 
-sio = socketio.Server()
+sio = socketio.Server(logger=True, engineio_logger=True)
 app = socketio.WSGIApp(sio, static_files={
     '/': {'content_type': 'text/html', 'filename': 'index.html'}
 })
