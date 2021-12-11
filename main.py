@@ -4,6 +4,8 @@ from pydub.silence import split_on_silence
 from pydub import AudioSegment
 import threading
 from word2number import w2n
+
+import working_server.server
 from communication_module import com_module
 
 cm = com_module(f"g:\\Projects\\UnrealEngine_project\\MI_\\MI\\Config\\MyConfig.txt")
@@ -90,7 +92,9 @@ def awaiting_order_handler(text):
 
     # Data Transfer Begin
     print("awaiting_order_handler")
-    cm.transfer_data(context.serialize_result())
+    working_server.server.message_bus(context.serialize_result())
+     #.message_bus(context.serialize_result())
+    #cm.transfer_data(context.serialize_result())
     print(f'awaiting_order_handler {len(text)}')
 
     # Data Transfer End
@@ -103,12 +107,16 @@ state_handlers = {
 
 
 def callback(recognizer, audio):
-    text = recognizer.recognize_google(audio, language="uk-UA")
-    print(text)
-    print(ctxt.curr_state)
-    ctxt.words = text.split()
-    ctxt.curr_word = 0
-    state_handlers[str(ctxt.curr_state)](text)
+    try:
+        text = recognizer.recognize_google(audio, language="uk-UA", show_all=True)
+        print(text)
+        print(ctxt.curr_state)
+        ctxt.words = text.split()
+        ctxt.curr_word = 0
+        state_handlers[str(ctxt.curr_state)](text)
+    except Exception as e:
+        return 10*"#" + " None " + 10*"#" + " "
+
 
 def main():
     r = sr.Recognizer()
