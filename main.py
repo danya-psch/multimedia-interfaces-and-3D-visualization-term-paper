@@ -6,9 +6,9 @@ import threading
 from word2number import w2n
 
 import working_server.server
-from communication_module import com_module
+# from communication_module import com_module
 
-cm = com_module(f"g:\\Projects\\UnrealEngine_project\\MI_\\MI\\Config\\MyConfig.txt")
+# cm = com_module(f"g:\\Projects\\UnrealEngine_project\\MI_\\MI\\Config\\MyConfig.txt")
 
 from states_machine.state_context import StateContext
 from states_machine.states.station_number import StationNumber
@@ -129,4 +129,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    #main()
+    working_server.server.message_bus("Hello WORKDasd!")
