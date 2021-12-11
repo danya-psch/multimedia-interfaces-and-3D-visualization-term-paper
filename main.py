@@ -4,10 +4,21 @@ from pydub.silence import split_on_silence
 from pydub import AudioSegment
 import threading
 from word2number import w2n
-
+import eventlet
+import socketio
 from states_machine.state_context import StateContext
 from states_machine.states.station_number import StationNumber
 from text_machine.text_machine import TextMachine
+
+sio = socketio.Server()
+app = socketio.WSGIApp(sio, static_files={
+    '/': {'content_type': 'text/html', 'filename': 'index.html'}
+})
+
+@sio.event
+def my_message(sid, data):
+    sio.send(data)
+    print('Send message ', data)
 
 
 class state:
@@ -103,7 +114,9 @@ def awaiting_order_handler(text):
         context.outcome_request()
 
     print('#'*10 + " RESULT BEGIN " + '#'*10)
-    print(context.serialize_result())
+    res = context.serialize_result()
+    print(res)
+    sio.emit('message', res)
     print('#' * 10 + " RESULT END " + '#'*10)
 
     # Data Transfer Begin
@@ -134,7 +147,9 @@ def main():
         r.adjust_for_ambient_noise(source)
     stop_listening = r.listen_in_background(mic, callback)
     while True:
-        pass
+        eventlet.wsgi.server(eventlet.listen(('', 3000)), app)
+
+
 
 
 if __name__ == "__main__":
