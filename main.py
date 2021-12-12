@@ -16,6 +16,12 @@ from states_machine.state_context import StateContext
 from states_machine.states.station_number import StationNumber
 from text_machine.text_machine import TextMachine
 
+import time
+import socketio
+
+sio = socketio.Client(logger=True, engineio_logger=True)
+start_timer = None
+
 
 class state:
     AWAITING_GREETINGS = 0
@@ -94,7 +100,9 @@ def awaiting_order_handler(text):
 
     # Data Transfer Begin
     print("awaiting_order_handler")
-    working_server.server.message_bus(context.serialize_result())
+
+    send_to_eu4({'data' : context.serialize_result()})
+     # working_server.server.message_bus(context.serialize_result())
      #.message_bus(context.serialize_result())
     #cm.transfer_data(context.serialize_result())
     print(f'awaiting_order_handler {len(text)}')
@@ -110,8 +118,10 @@ state_handlers = {
 
 def callback(recognizer, audio):
     try:
-        text = recognizer.recognize_google(audio, language="uk-UA", show_all=True)
+        text = recognizer.recognize_google(audio, language="uk-UA")
+        print("*"*10)
         print(text)
+        print("*" * 10)
         print(ctxt.curr_state)
         ctxt.words = text.split()
         ctxt.curr_word = 0
@@ -130,12 +140,9 @@ def main():
         pass
 
 
-import time
-import socketio
-
-sio = socketio.Client(logger=True, engineio_logger=True)
-start_timer = None
-
+def send_to_eu4(data):
+    print('send_to_eu4 = ', data)
+    sio.emit('message_bus', data)
 
 def send_ping():
     global start_timer
@@ -146,7 +153,7 @@ def send_ping():
 @sio.event
 def connect():
     print('connected to server')
-    send_ping()
+    #send_ping()
 
 
 @sio.event
@@ -162,9 +169,9 @@ def pong_from_server():
 if __name__ == '__main__':
     sio.connect('http://localhost:5000')
     while True:
-        print("HERE 2")
-        sio.emit('message_bus')
+        sio.emit('message_bus', '0|1|1|1')
         time.sleep(2)
+    #main()
     sio.wait()
 
 

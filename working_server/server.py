@@ -38,9 +38,15 @@ def my_event(sid, message):
 
 
 @sio.event
-def message_bus(message):
+def message_bus(sid, message):
     print('here = ', message)
-    sio.emit('chatMessage', 'TEST NMESAGE!!')
+    #print('here = ', message['data'])
+    try:
+
+        sio.emit('chatMessage', message)
+        print('DONE')
+    except Exception as ex:
+        print(ex)
 
 
 @sio.event
