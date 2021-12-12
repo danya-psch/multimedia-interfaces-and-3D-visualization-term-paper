@@ -48,7 +48,7 @@ typedef struct {
 	int amount_l_or_m;
 } result_t;
 
-void parse_result(const wchar_t *str, uint32 size, result_t *res);
+//void parse_result(const wchar_t *str, uint32 size, result_t *res);
 
 void mythread::my_init(ACommunicator *par) {
 	UE_LOG(LogTemp, Warning, TEXT("my_init"))
@@ -94,15 +94,15 @@ uint32 mythread::Run()
 				}
 				if (found && last_size != FileContent.Len()) {
 					last_size = FileContent.Len();
-					const TCHAR *wavLink = *FileContent.Mid(i + 1, FileContent.Len() - i);
-					result_t res = { 0 };
+					//const TCHAR *wavLink = *FileContent.Mid(i + 1, FileContent.Len() - i);
+					//result_t res = { 0 };
 					//char buf[BUF_LEN] = { 0 };
 					//memcpy(buf, wavLink, FileContent.Len() - i + 1);
-					parse_result(wavLink, FileContent.Len() - i, &res);
-					UE_LOG(LogTemp, Warning, TEXT("%s tank_num: %i, fuel_type: %i, l_or_m: %i, amount_l_or_m: %i"), wavLink, res.tank_num, res.fuel_type, res.l_or_m, res.amount_l_or_m);
-					if (parent) {
-						parent->notify(res.tank_num - 1);
-					}
+					//parse_result(wavLink, FileContent.Len() - i, &res);
+					//UE_LOG(LogTemp, Warning, TEXT("%s tank_num: %i, fuel_type: %i, l_or_m: %i, amount_l_or_m: %i"), wavLink, res.tank_num, res.fuel_type, res.l_or_m, res.amount_l_or_m);
+					//if (parent) {
+					//	parent->notify(res.tank_num - 1);
+					//}
 					//parse_result("1|2|3|4", &res);
 					
 				}
@@ -144,6 +144,7 @@ void mythread::Stop()
 }
 
 
+
 typedef enum {
 	tank_num = 0,
 	fuel_type,
@@ -153,7 +154,8 @@ typedef enum {
 
 #define case_field(strct, field, val) case field: {strct->field = val; break;}
 
-void parse_result(const wchar_t *str, uint32 size, result_t *res) {
+void parse_result(FString string, uint32 size, result_t *res) {
+	const TCHAR *str = *string;
 	char buf[BUF_LEN] = { 0 };
 	int buf_i = 0;
 	field_type ft = tank_num;
