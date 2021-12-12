@@ -101,7 +101,7 @@ def awaiting_order_handler(text):
     # Data Transfer Begin
     print("awaiting_order_handler")
 
-    send_to_eu4({'data' : context.serialize_result()})
+    send_to_eu4(context.serialize_result())
      # working_server.server.message_bus(context.serialize_result())
      #.message_bus(context.serialize_result())
     #cm.transfer_data(context.serialize_result())
