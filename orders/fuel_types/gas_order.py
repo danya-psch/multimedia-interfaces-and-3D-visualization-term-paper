@@ -2,6 +2,8 @@ from orders.fuel_order import FuelOrderInterface
 
 
 class GasOrder(FuelOrderInterface):
+    main_words = ["газ", "газу"]
+
     def __init__(self):
         pass
 
