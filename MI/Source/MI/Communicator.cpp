@@ -14,7 +14,7 @@
 // Sets default values
 ACommunicator::ACommunicator()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	/*
@@ -80,7 +80,7 @@ void ACommunicator::BeginPlay()
 			{
 
 				if (ReadFile(hPipe, buffer, STR_LEN - 1, &dwRead, NULL)) {
-				
+
 					memset(buffer, 0, STR_LEN);
 				}
 			}
@@ -102,39 +102,41 @@ void ACommunicator::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+typedef enum {
+	tank_num = 0,
+	fuel_type,
+	l_or_m,
+	amount_l_or_m,
+} field_type;
 
 
-Result parseResult(char *str) {
-	Result res;
-	char *temp = (char *)malloc(sizeof(int));
-	int temp_count = 0;
-	int num_count = 0;
-	for (int i = 0; i < strlen(str); i++) {
-		if (str[i] != '|') {
-			temp[temp_count] = str[i];
-			temp_count++;
+#define BUF_LEN (124)
+#define case_field(strct, field, val) case field: {(strct)->field = (val); break;}
+Fresult_t ACommunicator::parse_result(FString string) {
+	UE_LOG(LogTemp, Warning, TEXT("string, %s"), *string);
+	const TCHAR *str = *string;
+	int32 size = string.Len();
+	Fresult_t res;
+	char buf[BUF_LEN] = { 0 };
+	int buf_i = 0;
+	field_type ft = tank_num;
+	for (int32 i = 0; i < size + 1; i++) {
+		if (str[i] == '|' || !str[i]) {
+			int val = atoi(buf);
+			UE_LOG(LogTemp, Warning, TEXT("field: %i, %i"), ft, val);
+			switch (ft) {
+				case_field(&res, tank_num, val);
+				case_field(&res, fuel_type, val);
+				case_field(&res, l_or_m, val);
+				case_field(&res, amount_l_or_m, val);
+			}
+			ft = (field_type)((int)ft + 1);
+			memset(buf, 0, BUF_LEN);
+			buf_i = 0;
 		}
 		else {
-			int parsed = atoi(temp);
-			switch (num_count) {
-			case 0:
-				res.tank_num = parsed;
-				break;
-			case 1:
-				res.fuel_type = parsed;
-				break;
-			case 2:
-				res.l_or_m = parsed;
-				break;
-			default:
-				break;
-			}
-			memset(temp, 0, sizeof(int));
-			temp_count = 0;
-			num_count++;
+			buf[buf_i++] = str[i];
 		}
 	}
-	res.amount_l_or_m = atoi(temp);
-	free(temp);
 	return res;
 }

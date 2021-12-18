@@ -9,6 +9,22 @@
 #include "Communicator.generated.h"
 
 
+USTRUCT(BlueprintType)
+struct MI_API Fresult_t
+{
+	GENERATED_USTRUCT_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32  tank_num;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32  fuel_type;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32  l_or_m;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32  amount_l_or_m;
+};
+
+
 UCLASS()
 class MI_API ACommunicator : public AActor
 {
@@ -16,24 +32,26 @@ class MI_API ACommunicator : public AActor
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "int")
-	int destroy_projectiles_on_hit = -10;
+		int destroy_projectiles_on_hit = -10;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		AGameModeBase* GameMode;
 private:
 	mythread *my_worker;
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ACommunicator();
 
 	void notify(int index);
+	UFUNCTION(BlueprintCallable, Category = "parser")
+		Fresult_t parse_result(FString string);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 };

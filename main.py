@@ -169,7 +169,7 @@ def pong_from_server():
 if __name__ == '__main__':
     sio.connect('http://localhost:5000')
     while True:
-        sio.emit('message_bus', '0|1|1|1')
+        sio.emit('message_bus', '5|1|1|1')
         time.sleep(2)
     #main()
     sio.wait()
